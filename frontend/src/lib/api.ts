@@ -5,6 +5,7 @@ export type User = {
   name: string;
   email: string;
   role: string;
+  oauth_provider: string | null;
   created_at: string;
 };
 
@@ -69,4 +70,5 @@ export const api = {
     request<Repository>('/repositories/', { method: 'POST', body: JSON.stringify(data) }),
   deleteRepository: (id: string) => request<{ status: string }>(`/repositories/${id}`, { method: 'DELETE' }),
   reviews: () => request<Review[]>('/reviews/'),
+  githubRepositories: () => request<any[]>('/github/repositories'),
 };

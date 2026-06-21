@@ -165,11 +165,19 @@ async def github_callback(code: str, db: AsyncSession = Depends(get_db)):
         user = User(
             name=user_info.get("name") or user_info.get("login"),
             email=primary_email,
-            password_hash="" # OAuth user, no password
+            password_hash="", # OAuth user, no password
+            oauth_provider="github",
+            oauth_id=str(user_info.get("id")),
+            github_access_token=access_token
         )
         db.add(user)
-        await db.commit()
-        await db.refresh(user)
+    else:
+        user.github_access_token = access_token
+        user.oauth_provider = "github"
+        user.oauth_id = str(user_info.get("id"))
+        
+    await db.commit()
+    await db.refresh(user)
         
     # Issue JWT
     jwt_token = create_access_token(subject=user.email)

@@ -43,6 +43,7 @@ class User(Base):
     role = Column(SAEnum(UserRole), default=UserRole.DEVELOPER)
     oauth_provider = Column(String, nullable=True)
     oauth_id = Column(String, nullable=True)
+    github_access_token = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     repositories = relationship("Repository", back_populates="owner_user")

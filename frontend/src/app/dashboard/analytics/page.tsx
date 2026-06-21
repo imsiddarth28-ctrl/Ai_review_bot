@@ -3,14 +3,17 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { api, Repository, Review } from '@/lib/api';
+import { motion } from 'framer-motion';
+import { useNotification } from '@/components/Notifications';
+import { BarChart3 } from 'lucide-react';
 
-const COLORS = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981'];
+const COLORS = ['#ef4444', '#f97316', '#eab308', '#3b82f6']; // Critical, High, Medium, Low
 
 export default function Analytics() {
   const [isMounted, setIsMounted] = useState(false);
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [error, setError] = useState('');
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsMounted(true));
@@ -23,8 +26,8 @@ export default function Analytics() {
         setRepositories(repositoryData);
         setReviews(reviewData);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Unable to load analytics'));
-  }, []);
+      .catch((err) => addNotification(err instanceof Error ? err.message : 'Unable to load analytics', 'error'));
+  }, [addNotification]);
 
   const severityTotals = reviews.reduce(
     (totals, review) => {
@@ -50,19 +53,23 @@ export default function Analytics() {
   }));
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-white">Analytics</h2>
+          <p className="mt-1 text-sm text-gray-400">Deep dive into your codebase health and review metrics.</p>
+        </div>
       </div>
 
-      {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Issue Categories</h3>
-          <div className="h-80 w-full">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6">Issue Categories</h3>
+          <div className="h-80 w-full relative">
             {issueData.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-gray-500">No issue data yet.</div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <BarChart3 className="h-10 w-10 text-gray-600 mb-3" />
+                <p className="text-sm text-gray-400">No issue data yet.</p>
+              </div>
             ) : isMounted && (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -70,44 +77,64 @@ export default function Analytics() {
                     data={issueData}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    innerRadius={60}
                     outerRadius={100}
-                    fill="#8884d8"
+                    paddingAngle={5}
                     dataKey="value"
+                    stroke="none"
                   >
                     {issueData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: '#fff' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36} 
+                    iconType="circle"
+                    formatter={(value) => <span className="text-gray-300 ml-1">{value}</span>}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Team Productivity</h3>
-          <div className="h-80 w-full">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6">Repository Productivity</h3>
+          <div className="h-80 w-full relative">
             {repositoryData.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-gray-500">No repository data yet.</div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <BarChart3 className="h-10 w-10 text-gray-600 mb-3" />
+                <p className="text-sm text-gray-400">No repository data yet.</p>
+              </div>
             ) : isMounted && (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={repositoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip cursor={{ fill: 'transparent' }} />
-                  <Legend />
-                  <Bar dataKey="reviews" name="PRs Reviewed" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="issues" name="Issues Found" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <BarChart data={repositoryData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
+                  <XAxis dataKey="name" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: '#fff' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  />
+                  <Legend 
+                    verticalAlign="top" 
+                    height={36} 
+                    iconType="circle"
+                    formatter={(value) => <span className="text-gray-300 ml-1">{value}</span>}
+                  />
+                  <Bar dataKey="reviews" name="PRs Reviewed" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                  <Bar dataKey="issues" name="Issues Found" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={40} />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
