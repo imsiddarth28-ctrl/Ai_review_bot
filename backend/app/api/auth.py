@@ -123,7 +123,7 @@ async def github_callback(code: str, db: AsyncSession = Depends(get_db)):
         access_token = token_data.get("access_token")
         
         if not access_token:
-            raise HTTPException(status_code=400, detail="Failed to authenticate with GitHub")
+            raise HTTPException(status_code=400, detail=f"Failed to authenticate with GitHub. Response: {token_data}")
             
         # Get user info
         user_res = await client.get(
