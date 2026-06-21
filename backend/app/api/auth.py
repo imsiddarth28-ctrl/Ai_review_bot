@@ -94,3 +94,72 @@ async def update_users_me(
     await db.commit()
     await db.refresh(current_user)
     return current_user
+
+@router.get("/github/login")
+async def github_login():
+    from app.core.config import settings
+    from fastapi.responses import RedirectResponse
+    github_auth_url = f"https://github.com/login/oauth/authorize?client_id={settings.GITHUB_CLIENT_ID}&scope=user:email"
+    return RedirectResponse(github_auth_url)
+
+@router.get("/github/callback")
+async def github_callback(code: str, db: AsyncSession = Depends(get_db)):
+    from app.core.config import settings
+    from fastapi.responses import RedirectResponse
+    import httpx
+    
+    async with httpx.AsyncClient() as client:
+        # Exchange code for access token
+        token_res = await client.post(
+            "https://github.com/login/oauth/access_token",
+            headers={"Accept": "application/json"},
+            data={
+                "client_id": settings.GITHUB_CLIENT_ID,
+                "client_secret": settings.GITHUB_CLIENT_SECRET,
+                "code": code
+            }
+        )
+        token_data = token_res.json()
+        access_token = token_data.get("access_token")
+        
+        if not access_token:
+            raise HTTPException(status_code=400, detail="Failed to authenticate with GitHub")
+            
+        # Get user info
+        user_res = await client.get(
+            "https://api.github.com/user",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        user_info = user_res.json()
+        
+        # Get user emails to find the primary one
+        email_res = await client.get(
+            "https://api.github.com/user/emails",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        emails = email_res.json()
+        primary_email = next((e["email"] for e in emails if e.get("primary")), None)
+        
+        if not primary_email:
+            raise HTTPException(status_code=400, detail="No primary email found on GitHub account")
+            
+    # Create or update user in DB
+    result = await db.execute(select(User).where(User.email == primary_email))
+    user = result.scalars().first()
+    
+    if not user:
+        user = User(
+            name=user_info.get("name") or user_info.get("login"),
+            email=primary_email,
+            password_hash="" # OAuth user, no password
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        
+    # Issue JWT
+    jwt_token = create_access_token(subject=user.email)
+    
+    # Redirect back to frontend
+    redirect_url = f"{settings.FRONTEND_URL}/auth/callback?token={jwt_token}"
+    return RedirectResponse(redirect_url)

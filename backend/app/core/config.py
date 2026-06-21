@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     # OAuth
     GITHUB_CLIENT_ID: str = ""
     GITHUB_CLIENT_SECRET: str = ""
+    FRONTEND_URL: str = "http://localhost:3000"
     
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 

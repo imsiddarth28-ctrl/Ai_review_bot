@@ -75,6 +75,8 @@ export default function Register() {
           <div className="space-y-6">
             <div>
               <button
+                type="button"
+                onClick={() => window.location.href = `${API_URL}/auth/github/login`}
                 className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 <GitBranch className="mr-2 h-5 w-5" />
