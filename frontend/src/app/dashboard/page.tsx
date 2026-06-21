@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { FolderGit2, AlertCircle, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
+import { FolderGit2, AlertCircle, CheckCircle2, Clock, ArrowRight, History } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { api, Repository, Review } from '@/lib/api';
 import { motion } from 'framer-motion';
@@ -50,7 +50,7 @@ export default function Dashboard() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
   };
 
   return (

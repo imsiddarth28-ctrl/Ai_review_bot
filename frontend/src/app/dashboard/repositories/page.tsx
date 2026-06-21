@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, GitBranch, Search, Settings2, Trash2, Github, AlertCircle } from 'lucide-react';
+import { Plus, GitBranch, Search, Settings2, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Github } from '@/components/Icons';
 import { api, Repository } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotification } from '@/components/Notifications';

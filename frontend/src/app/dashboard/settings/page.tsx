@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from 'react';
-import { User as UserIcon, Bell, Key, Shield, Github, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { User as UserIcon, Bell, Key, Shield, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Github } from '@/components/Icons';
 import { api, User } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { useNotification } from '@/components/Notifications';
