@@ -128,17 +128,31 @@ async def github_callback(code: str, db: AsyncSession = Depends(get_db)):
         # Get user info
         user_res = await client.get(
             "https://api.github.com/user",
-            headers={"Authorization": f"Bearer {access_token}"}
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "User-Agent": "Antigravity-AI-Review-Bot"
+            }
         )
+        if user_res.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to fetch user info from GitHub")
         user_info = user_res.json()
         
         # Get user emails to find the primary one
         email_res = await client.get(
             "https://api.github.com/user/emails",
-            headers={"Authorization": f"Bearer {access_token}"}
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "User-Agent": "Antigravity-AI-Review-Bot"
+            }
         )
+        if email_res.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to fetch user emails from GitHub")
+            
         emails = email_res.json()
-        primary_email = next((e["email"] for e in emails if e.get("primary")), None)
+        if not isinstance(emails, list):
+            raise HTTPException(status_code=400, detail="Invalid email response from GitHub")
+            
+        primary_email = next((e["email"] for e in emails if isinstance(e, dict) and e.get("primary")), None)
         
         if not primary_email:
             raise HTTPException(status_code=400, detail="No primary email found on GitHub account")
