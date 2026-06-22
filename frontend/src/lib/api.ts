@@ -25,6 +25,7 @@ export type Review = {
   pr_title: string | null;
   status: string;
   severity_summary: Record<string, number> | null;
+  review_text: string | null;
   ai_model: string | null;
   created_at: string;
 };
