@@ -45,6 +45,7 @@ class ReviewBase(BaseModel):
     pr_title: Optional[str] = None
     status: ReviewStatus
     severity_summary: Optional[Dict[str, int]] = None
+    review_text: Optional[str] = None
     ai_model: Optional[str] = None
 
 class ReviewResponse(ReviewBase):
