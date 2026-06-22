@@ -49,26 +49,26 @@ export default function Settings() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 max-w-5xl">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-white">Settings</h2>
-        <p className="mt-1 text-sm text-gray-400">Manage your account settings and connected platforms.</p>
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900">Settings</h2>
+        <p className="mt-1 text-sm text-gray-500">Manage your account settings and connected platforms.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-1">
           <nav className="space-y-2">
-            <a href="#" className="glass-panel text-white flex items-center px-4 py-3 text-sm font-medium rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.05)] border-white/20">
-              <UserIcon className="mr-3 flex-shrink-0 h-5 w-5 text-blue-400" />
+            <a href="#" className="bg-white border border-gray-200 text-gray-900 flex items-center px-4 py-3 text-sm font-medium rounded-xl shadow-sm">
+              <UserIcon className="mr-3 flex-shrink-0 h-5 w-5 text-blue-600" />
               Profile
             </a>
-            <a href="#" className="text-gray-400 hover:bg-white/5 hover:text-white transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
+            <a href="#" className="text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
               <Bell className="mr-3 flex-shrink-0 h-5 w-5 text-gray-500" />
               Notifications
             </a>
-            <a href="#" className="text-gray-400 hover:bg-white/5 hover:text-white transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
+            <a href="#" className="text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
               <Key className="mr-3 flex-shrink-0 h-5 w-5 text-gray-500" />
               API Keys
             </a>
-            <a href="#" className="text-gray-400 hover:bg-white/5 hover:text-white transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
+            <a href="#" className="text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center px-4 py-3 text-sm font-medium rounded-xl">
               <Shield className="mr-3 flex-shrink-0 h-5 w-5 text-gray-500" />
               Security
             </a>
@@ -76,16 +76,16 @@ export default function Settings() {
         </div>
 
         <div className="md:col-span-3 space-y-8">
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-card sm:rounded-2xl border border-white/10 overflow-hidden">
-            <div className="px-6 py-6 border-b border-white/10">
-              <h3 className="text-xl leading-6 font-semibold text-white">Profile Information</h3>
-              <p className="mt-1 text-sm text-gray-400">Update your account details and public profile.</p>
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="minimal-card sm:rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-6 border-b border-gray-100">
+              <h3 className="text-xl leading-6 font-semibold text-gray-900">Profile Information</h3>
+              <p className="mt-1 text-sm text-gray-500">Update your account details and public profile.</p>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="px-6 py-6 space-y-6">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <div className="sm:col-span-4">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300">Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                     <div className="mt-2">
                       <input
                         type="text"
@@ -93,13 +93,13 @@ export default function Settings() {
                         id="name"
                         value={name}
                         onChange={(event) => setName(event.target.value)}
-                        className="glass-panel block w-full sm:text-sm text-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow rounded-xl"
+                        className="bg-white border border-gray-200 block w-full sm:text-sm text-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow rounded-xl shadow-sm"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email address</label>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
                     <div className="mt-2">
                       <input
                         id="email"
@@ -107,13 +107,13 @@ export default function Settings() {
                         type="email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
-                        className="glass-panel block w-full sm:text-sm text-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow rounded-xl"
+                        className="bg-white border border-gray-200 block w-full sm:text-sm text-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow rounded-xl shadow-sm"
                       />
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="px-6 py-4 bg-white/5 border-t border-white/10 text-right">
+              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-right">
                 <button
                   type="submit"
                   disabled={isSaving}
@@ -125,34 +125,34 @@ export default function Settings() {
             </form>
           </motion.div>
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card sm:rounded-2xl border border-white/10 overflow-hidden">
-            <div className="px-6 py-6 border-b border-white/10">
-              <h3 className="text-xl leading-6 font-semibold text-white">Connected Accounts</h3>
-              <p className="mt-1 text-sm text-gray-400">Link external accounts to enable AI code reviews.</p>
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="minimal-card sm:rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-6 border-b border-gray-100">
+              <h3 className="text-xl leading-6 font-semibold text-gray-900">Connected Accounts</h3>
+              <p className="mt-1 text-sm text-gray-500">Link external accounts to enable AI code reviews.</p>
             </div>
             <div className="px-6 py-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-900">
                     <Github className="h-6 w-6" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-white">GitHub Integration</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm font-medium text-gray-900">GitHub Integration</p>
+                    <p className="text-sm text-gray-500">
                       {user?.oauth_provider === 'github' ? 'Connected via OAuth' : 'Not connected'}
                     </p>
                   </div>
                 </div>
                 <div>
                   {user?.oauth_provider === 'github' ? (
-                    <span className="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1.5 text-sm font-medium text-green-400 border border-green-500/20">
+                    <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200">
                       <CheckCircle2 className="mr-1.5 h-4 w-4" />
                       Connected
                     </span>
                   ) : (
                     <button
                       onClick={handleConnectGithub}
-                      className="glass-button inline-flex items-center rounded-xl px-4 py-2 text-sm font-medium text-white hover:text-blue-400"
+                      className="bg-white border border-gray-200 inline-flex items-center rounded-xl px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:border-blue-600 transition-colors shadow-sm"
                     >
                       Connect Account
                       <ArrowRight className="ml-2 h-4 w-4" />

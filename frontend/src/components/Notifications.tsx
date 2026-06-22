@@ -50,10 +50,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-              className={`glass-panel flex items-center p-4 rounded-xl shadow-lg border ${
-                notification.type === 'success' ? 'border-green-500/30 text-green-400' :
-                notification.type === 'error' ? 'border-red-500/30 text-red-400' :
-                'border-blue-500/30 text-blue-400'
+              className={`bg-white flex items-center p-4 rounded-xl shadow-md border ${
+                notification.type === 'success' ? 'border-green-200 text-green-600' :
+                notification.type === 'error' ? 'border-red-200 text-red-600' :
+                'border-blue-200 text-blue-600'
               }`}
             >
               <div className="mr-3">
@@ -61,10 +61,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
                 {notification.type === 'error' && <AlertCircle className="h-5 w-5" />}
                 {notification.type === 'info' && <Info className="h-5 w-5" />}
               </div>
-              <p className="text-sm font-medium text-white">{notification.message}</p>
+              <p className="text-sm font-medium text-gray-900">{notification.message}</p>
               <button
                 onClick={() => removeNotification(notification.id)}
-                className="ml-4 text-gray-400 hover:text-white transition-colors"
+                className="ml-4 text-gray-400 hover:text-gray-900 transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>

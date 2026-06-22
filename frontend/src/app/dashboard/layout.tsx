@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <NotificationProvider>
-      <div className="flex h-screen overflow-hidden bg-transparent text-white">
+      <div className="flex h-screen overflow-hidden bg-gray-50/30 text-gray-900">
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden relative z-10">
           <TopNav />

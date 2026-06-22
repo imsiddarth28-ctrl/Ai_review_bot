@@ -28,14 +28,14 @@ const Sidebar = () => {
     <motion.div 
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="glass-panel z-20 m-4 flex h-[calc(100vh-2rem)] w-64 flex-col rounded-3xl"
+      className="bg-white border border-gray-200 shadow-sm z-20 m-4 flex h-[calc(100vh-2rem)] w-64 flex-col rounded-3xl"
     >
-      <div className="flex h-20 items-center px-8">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 mr-3 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+      <div className="flex h-20 items-center px-8 border-b border-gray-100">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 mr-3">
           <span className="font-bold text-xl">A</span>
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-white">
-          Anti<span className="text-blue-500 text-glow">gravity</span>
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">
+          Anti<span className="text-blue-600">gravity</span>
         </h1>
       </div>
       
@@ -49,26 +49,26 @@ const Sidebar = () => {
               href={link.href} 
               className={cn(
                 "group relative flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300",
-                isActive ? "bg-white/10 text-white shadow-inner border border-white/5" : "text-gray-400 hover:bg-white/5 hover:text-white"
+                isActive ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               )}
             >
               {isActive && (
                 <motion.div 
                   layoutId="sidebar-active"
-                  className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" 
+                  className="absolute left-0 top-0 h-full w-1 rounded-r-full bg-blue-600" 
                 />
               )}
-              <Icon className={cn("mr-3 h-5 w-5 transition-colors", isActive ? "text-blue-400" : "text-gray-500 group-hover:text-gray-300")} />
+              <Icon className={cn("mr-3 h-5 w-5 transition-colors", isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600")} />
               {link.name}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4">
+      <div className="p-4 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium text-gray-400 transition-all hover:bg-red-500/10 hover:text-red-400"
+          className="flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-all hover:bg-red-50 hover:text-red-600"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Logout
@@ -79,3 +79,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

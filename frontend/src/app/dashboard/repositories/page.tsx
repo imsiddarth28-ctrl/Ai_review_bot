@@ -68,18 +68,18 @@ export default function Repositories() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-white">Repositories</h2>
-          <p className="mt-1 text-sm text-gray-400">Connect your GitHub repositories to enable automated AI reviews.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Repositories</h2>
+          <p className="mt-1 text-sm text-gray-500">Connect your GitHub repositories to enable automated AI reviews.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left Column: GitHub Integration */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="glass-card rounded-2xl p-6">
+          <div className="minimal-card rounded-2xl p-6">
             <div className="flex items-center space-x-3 mb-6">
-              <Github className="h-6 w-6 text-white" />
-              <h3 className="text-lg font-semibold text-white">Available on GitHub</h3>
+              <Github className="h-6 w-6 text-gray-900" />
+              <h3 className="text-lg font-semibold text-gray-900">Available on GitHub</h3>
             </div>
             
             {loadingGithub ? (
@@ -94,19 +94,19 @@ export default function Repositories() {
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
                       key={repo.id} 
-                      className="glass-panel p-4 rounded-xl flex flex-col space-y-3"
+                      className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl flex flex-col space-y-3"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-white truncate">{repo.full_name}</p>
-                        {repo.private && <span className="inline-block mt-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-500/20 text-gray-400">Private</span>}
+                        <p className="text-sm font-semibold text-gray-900 truncate">{repo.full_name}</p>
+                        {repo.private && <span className="inline-block mt-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Private</span>}
                       </div>
                       <button
                         onClick={() => handleAddRepo(repo.owner, repo.name)}
                         disabled={isSubmitting || isConnected}
                         className={`flex w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                           isConnected 
-                            ? "bg-green-500/20 text-green-400 cursor-not-allowed" 
-                            : "bg-white/10 text-white hover:bg-blue-500 hover:text-white"
+                            ? "bg-green-50 text-green-600 cursor-not-allowed" 
+                            : "bg-gray-50 text-gray-700 hover:bg-blue-600 hover:text-white border border-gray-200 hover:border-blue-600"
                         }`}
                       >
                         {isConnected ? (
@@ -120,11 +120,11 @@ export default function Repositories() {
                 })}
               </div>
             ) : (
-              <div className="text-center py-6 glass-panel rounded-xl">
+              <div className="text-center py-6 bg-gray-50 border border-gray-100 rounded-xl">
                 <AlertCircle className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-300">No GitHub account linked</p>
+                <p className="text-sm text-gray-600">No GitHub account linked</p>
                 <p className="text-xs text-gray-500 mt-1 mb-4">Link your account in Settings to see your repositories.</p>
-                <a href="/dashboard/settings" className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-500">Go to Settings</a>
+                <a href="/dashboard/settings" className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700">Go to Settings</a>
               </div>
             )}
           </div>
@@ -132,31 +132,31 @@ export default function Repositories() {
 
         {/* Right Column: Connected Repositories */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card rounded-2xl p-6 h-full flex flex-col">
+          <div className="minimal-card rounded-2xl p-6 h-full flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
-              <h3 className="text-lg font-semibold text-white">Connected Repositories</h3>
-              <div className="flex w-full sm:max-w-xs items-center rounded-xl bg-white/5 border border-white/10 px-3 py-2 focus-within:border-white/20">
+              <h3 className="text-lg font-semibold text-gray-900">Connected Repositories</h3>
+              <div className="flex w-full sm:max-w-xs items-center rounded-xl bg-gray-50 border border-gray-200 px-3 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
                 <Search className="h-4 w-4 text-gray-400" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   type="text"
                   placeholder="Search connected..."
-                  className="ml-2 w-full border-none bg-transparent text-sm text-white placeholder-gray-500 focus:outline-none"
+                  className="ml-2 w-full border-none bg-transparent text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex-1 overflow-hidden rounded-xl border border-white/5 bg-black/20">
-              <table className="min-w-full divide-y divide-white/5">
-                <thead className="bg-white/5">
+            <div className="flex-1 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Repository</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Status</th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-400">Actions</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Repository</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-gray-200">
                   <AnimatePresence>
                     {filteredRepositories.length === 0 ? (
                       <tr>
@@ -171,28 +171,28 @@ export default function Repositories() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           key={repo.id} 
-                          className="hover:bg-white/5 transition-colors"
+                          className="hover:bg-gray-50 transition-colors"
                         >
                           <td className="whitespace-nowrap px-6 py-4">
                             <div className="flex items-center">
-                              <GitBranch className="h-5 w-5 text-gray-500 mr-3" />
+                              <GitBranch className="h-5 w-5 text-gray-400 mr-3" />
                               <div>
-                                <div className="text-sm font-medium text-white">{repo.owner}/{repo.repo_name}</div>
+                                <div className="text-sm font-medium text-gray-900">{repo.owner}/{repo.repo_name}</div>
                                 <div className="text-xs text-gray-500 mt-0.5">Added {new Date(repo.created_at).toLocaleDateString()}</div>
                               </div>
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            <span className="inline-flex items-center rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400 border border-green-500/20">
-                              <span className="h-1.5 w-1.5 rounded-full bg-green-400 mr-2"></span>
+                            <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-600 border border-green-200">
+                              <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-2"></span>
                               Active
                             </span>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                            <button className="mr-4 text-gray-500 hover:text-white transition-colors" aria-label="Settings">
+                            <button className="mr-4 text-gray-400 hover:text-gray-900 transition-colors" aria-label="Settings">
                               <Settings2 className="h-5 w-5" />
                             </button>
-                            <button onClick={() => handleDelete(repo.id, repo.repo_name)} className="text-gray-500 hover:text-red-400 transition-colors" aria-label="Delete">
+                            <button onClick={() => handleDelete(repo.id, repo.repo_name)} className="text-gray-400 hover:text-red-500 transition-colors" aria-label="Delete">
                               <Trash2 className="h-5 w-5" />
                             </button>
                           </td>

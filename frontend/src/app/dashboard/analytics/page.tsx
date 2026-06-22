@@ -56,19 +56,19 @@ export default function Analytics() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-white">Analytics</h2>
-          <p className="mt-1 text-sm text-gray-400">Deep dive into your codebase health and review metrics.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Analytics</h2>
+          <p className="mt-1 text-sm text-gray-500">Deep dive into your codebase health and review metrics.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">Issue Categories</h3>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="minimal-card rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">Issue Categories</h3>
           <div className="h-80 w-full relative">
             {issueData.length === 0 ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <BarChart3 className="h-10 w-10 text-gray-600 mb-3" />
-                <p className="text-sm text-gray-400">No issue data yet.</p>
+                <BarChart3 className="h-10 w-10 text-gray-300 mb-3" />
+                <p className="text-sm text-gray-500">No issue data yet.</p>
               </div>
             ) : isMounted && (
               <ResponsiveContainer width="100%" height="100%">
@@ -88,14 +88,14 @@ export default function Analytics() {
                     ))}
                   </Pie>
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: '#fff' }}
-                    itemStyle={{ color: '#fff' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', color: '#0f172a' }}
+                    itemStyle={{ color: '#0f172a' }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
                     height={36} 
                     iconType="circle"
-                    formatter={(value) => <span className="text-gray-300 ml-1">{value}</span>}
+                    formatter={(value) => <span className="text-gray-600 ml-1">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -103,29 +103,29 @@ export default function Analytics() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="glass-card rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">Repository Productivity</h3>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="minimal-card rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">Repository Productivity</h3>
           <div className="h-80 w-full relative">
             {repositoryData.length === 0 ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <BarChart3 className="h-10 w-10 text-gray-600 mb-3" />
-                <p className="text-sm text-gray-400">No repository data yet.</p>
+                <BarChart3 className="h-10 w-10 text-gray-300 mb-3" />
+                <p className="text-sm text-gray-500">No repository data yet.</p>
               </div>
             ) : isMounted && (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={repositoryData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
-                  <XAxis dataKey="name" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: '#fff' }}
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', color: '#0f172a' }}
+                    cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                   />
                   <Legend 
                     verticalAlign="top" 
                     height={36} 
                     iconType="circle"
-                    formatter={(value) => <span className="text-gray-300 ml-1">{value}</span>}
+                    formatter={(value) => <span className="text-gray-600 ml-1">{value}</span>}
                   />
                   <Bar dataKey="reviews" name="PRs Reviewed" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={40} />
                   <Bar dataKey="issues" name="Issues Found" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={40} />
