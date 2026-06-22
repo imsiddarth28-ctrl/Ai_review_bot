@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { Search, AlertCircle, CheckCircle2, Clock, GitPullRequest } from 'lucide-react';
+import { Search, AlertCircle, CheckCircle2, Clock, GitPullRequest, ChevronDown, ChevronUp } from 'lucide-react';
 import { api, Review } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotification } from '@/components/Notifications';
+import ReactMarkdown from 'react-markdown';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [query, setQuery] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const { addNotification } = useNotification();
 
   useEffect(() => {
@@ -16,6 +18,10 @@ export default function Reviews() {
       .then(setReviews)
       .catch((err) => addNotification(err instanceof Error ? err.message : 'Unable to load reviews', 'error'));
   }, [addNotification]);
+
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
 
   const filteredReviews = useMemo(() => {
     const search = query.toLowerCase();
@@ -67,9 +73,12 @@ export default function Reviews() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   key={review.id} 
-                  className="glass-card cursor-pointer rounded-2xl p-6 transition-all hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] group"
+                  className={`glass-card rounded-2xl transition-all border ${expandedId === review.id ? 'border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.15)]' : 'border-white/10 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'} group overflow-hidden`}
                 >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                  <div 
+                    className="p-6 cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0"
+                    onClick={() => toggleExpand(review.id)}
+                  >
                     <div className="flex items-start space-x-4">
                       <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
                         <GitPullRequest className="h-5 w-5" />
@@ -109,8 +118,28 @@ export default function Reviews() {
                         <Clock className="mr-1.5 h-3.5 w-3.5" />
                         {review.status}
                       </span>
+                      <div className="ml-2 text-gray-500 group-hover:text-white transition-colors">
+                        {expandedId === review.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </div>
                     </div>
                   </div>
+                  
+                  <AnimatePresence>
+                    {expandedId === review.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="border-t border-white/10 px-6 py-6"
+                      >
+                        <div className="prose prose-invert max-w-none prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-white/10 prose-p:text-gray-300 prose-headings:text-white prose-a:text-blue-400">
+                          <ReactMarkdown>
+                            {review.review_text || "No review content available."}
+                          </ReactMarkdown>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               );
             })
