@@ -51,6 +51,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers,
+    cache: 'no-store', // Disable aggressive Next.js caching
   });
 
   if (!response.ok) {
