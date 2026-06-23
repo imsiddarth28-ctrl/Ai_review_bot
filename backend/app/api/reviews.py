@@ -82,15 +82,29 @@ async def post_chat_message(
     
     # Generate AI response
     try:
-        # In a real app we would pass chat history here
+        # Determine provider from original review's model
+        model_name = review.ai_model or "llama-3.3-70b-versatile"
+        provider = "groq"
+        if "gemini" in model_name.lower():
+            provider = "gemini"
+        elif "gpt" in model_name.lower() or "o1" in model_name.lower():
+            provider = "openai"
+
+        from app.core.logger import logger
+        logger.info(f"Generating AI chat response for review {review_id} using {provider} / {model_name}")
         ai_response_text = await reviewer_service.chat_with_review(
             review_text=review.review_text or "",
             history=[],
             user_message=message.content,
-            model="llama-3.3-70b-versatile"
+            provider=provider,
+            model=model_name
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to get AI response")
+        import traceback
+        traceback.print_exc()
+        from app.core.logger import logger
+        logger.error(f"Chat AI Error: {str(e)}")
+        ai_response_text = "Sorry, I encountered an internal error while trying to process your request. Please try again later."
         
     # Save AI message
     ai_msg = ChatMessage(review_id=review_id, role=ChatRole.AI, content=ai_response_text)
