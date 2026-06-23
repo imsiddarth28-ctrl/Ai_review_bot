@@ -42,6 +42,15 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to manually create chat_messages table: {e}")
         pass
+
+    # 4. Safe migration to convert role column to VARCHAR if it was previously chatrole enum
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("ALTER TABLE chat_messages ALTER COLUMN role TYPE VARCHAR USING role::varchar"))
+            logger.info("Successfully converted chat_messages.role column to VARCHAR")
+    except Exception as e:
+        # Fails silently on SQLite or if type is already VARCHAR
+        pass
             
     logger.info("Database tables created/verified")
     yield
