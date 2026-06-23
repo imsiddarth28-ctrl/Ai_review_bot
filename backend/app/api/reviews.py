@@ -44,3 +44,59 @@ async def read_review(
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
     return review
+
+from app.db.models import ChatMessage, ChatRole
+from app.db.schemas import ChatMessageResponse, ChatMessageCreate
+from app.services.reviewer import reviewer_service
+
+@router.get("/{review_id}/chat", response_model=List[ChatMessageResponse])
+async def get_chat_history(
+    review_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify access
+    review = await read_review(review_id, current_user, db)
+    
+    result = await db.execute(
+        select(ChatMessage)
+        .where(ChatMessage.review_id == review_id)
+        .order_by(ChatMessage.created_at.asc())
+    )
+    return result.scalars().all()
+
+@router.post("/{review_id}/chat", response_model=ChatMessageResponse)
+async def post_chat_message(
+    review_id: UUID,
+    message: ChatMessageCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify access
+    review = await read_review(review_id, current_user, db)
+    
+    # Save user message
+    user_msg = ChatMessage(review_id=review_id, role=ChatRole.USER, content=message.content)
+    db.add(user_msg)
+    await db.commit()
+    
+    # Generate AI response
+    try:
+        # In a real app we would pass chat history here
+        ai_response_text = await reviewer_service.chat_with_review(
+            review_text=review.review_text or "",
+            history=[],
+            user_message=message.content,
+            model="llama-3.3-70b-versatile"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to get AI response")
+        
+    # Save AI message
+    ai_msg = ChatMessage(review_id=review_id, role=ChatRole.AI, content=ai_response_text)
+    db.add(ai_msg)
+    await db.commit()
+    await db.refresh(ai_msg)
+    
+    return ai_msg
+

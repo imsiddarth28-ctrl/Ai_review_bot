@@ -53,3 +53,14 @@ class ReviewResponse(ReviewBase):
     repository_id: UUID
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class ChatMessageCreate(BaseModel):
+    content: str
+
+class ChatMessageResponse(BaseModel):
+    id: UUID
+    review_id: UUID
+    role: str
+    content: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)

@@ -5,6 +5,7 @@ import { Search, GitPullRequest, ChevronDown, ChevronUp } from 'lucide-react';
 import { api, Review } from '@/lib/api';
 import { useNotification } from '@/components/Notifications';
 import ReactMarkdown from 'react-markdown';
+import ReviewChat from '@/components/ReviewChat';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -104,6 +105,12 @@ export default function Reviews() {
                       <ReactMarkdown>
                         {review.review_text || "No review content available."}
                       </ReactMarkdown>
+                    </div>
+                    
+                    <div className="mt-8">
+                      <h4 className="text-sm font-semibold text-black mb-2">Interrogate this Review</h4>
+                      <p className="text-xs text-neutral-500 mb-4">Ask the AI questions about the code, suggested fixes, or potential security risks.</p>
+                      <ReviewChat reviewId={review.id} />
                     </div>
                   </div>
                 )}

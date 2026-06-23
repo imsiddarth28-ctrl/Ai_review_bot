@@ -25,7 +25,7 @@ from app.core.config import settings
 target_metadata = Base.metadata
 
 # Replace asyncpg with psycopg2 for synchronous Alembic migrations
-sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
+sync_url = settings.DATABASE_URL.replace("+asyncpg", "").replace("+aiosqlite", "")
 config.set_main_option("sqlalchemy.url", sync_url)
 
 # other values from the config, defined by the needs of env.py,

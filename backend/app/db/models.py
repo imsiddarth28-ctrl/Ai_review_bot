@@ -77,6 +77,7 @@ class Review(Base):
 
     repository = relationship("Repository", back_populates="reviews")
     issues = relationship("Issue", back_populates="review")
+    chat_messages = relationship("ChatMessage", back_populates="review")
 
 class Issue(Base):
     __tablename__ = "issues"
@@ -90,3 +91,18 @@ class Issue(Base):
     suggestion = Column(Text, nullable=True)
 
     review = relationship("Review", back_populates="issues")
+
+class ChatRole(str, enum.Enum):
+    USER = "user"
+    AI = "ai"
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    review_id = Column(Uuid(as_uuid=True), ForeignKey("reviews.id"))
+    role = Column(SAEnum(ChatRole), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    review = relationship("Review", back_populates="chat_messages")

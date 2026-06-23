@@ -62,6 +62,14 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return response.json();
 }
 
+export type ChatMessage = {
+  id: string;
+  review_id: string;
+  role: 'user' | 'ai';
+  content: string;
+  created_at: string;
+};
+
 export const api = {
   me: () => request<User>('/auth/me'),
   updateMe: (data: Pick<User, 'name' | 'email'>) =>
@@ -72,4 +80,7 @@ export const api = {
   deleteRepository: (id: string) => request<{ status: string }>(`/repositories/${id}`, { method: 'DELETE' }),
   reviews: () => request<Review[]>('/reviews/'),
   githubRepositories: () => request<any[]>('/github/repositories'),
+  getChatHistory: (reviewId: string) => request<ChatMessage[]>(`/reviews/${reviewId}/chat`),
+  postChatMessage: (reviewId: string, content: string) => 
+    request<ChatMessage>(`/reviews/${reviewId}/chat`, { method: 'POST', body: JSON.stringify({ content }) }),
 };
