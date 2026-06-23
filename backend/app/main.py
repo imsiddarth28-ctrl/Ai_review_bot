@@ -20,6 +20,30 @@ async def lifespan(app: FastAPI):
             await conn.execute(text("ALTER TABLE users ADD COLUMN github_access_token VARCHAR"))
         except Exception as e:
             pass # Column likely already exists
+            
+        # Fallback to forcefully create chat_messages if create_all failed (e.g. enum issues on Postgres)
+        try:
+            await conn.execute(text("""
+                DO $$ 
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'chatrole') THEN
+                        CREATE TYPE chatrole AS ENUM ('user', 'ai');
+                    END IF;
+                END $$;
+            """))
+            await conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS chat_messages (
+                    id UUID PRIMARY KEY,
+                    review_id UUID REFERENCES reviews(id),
+                    role chatrole NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at TIMESTAMP WITHOUT TIME ZONE
+                );
+            """))
+        except Exception as e:
+            logger.error(f"Failed to manually create chat_messages table: {e}")
+            pass
+            
     logger.info("Database tables created/verified")
     yield
     logger.info("Shutting down Antigravity Platform...")
