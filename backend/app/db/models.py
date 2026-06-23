@@ -101,7 +101,7 @@ class ChatMessage(Base):
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     review_id = Column(Uuid(as_uuid=True), ForeignKey("reviews.id"))
-    role = Column(SAEnum(ChatRole), nullable=False)
+    role = Column(String, nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 

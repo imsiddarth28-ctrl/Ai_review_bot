@@ -27,22 +27,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         pass # Column likely already exists
         
-    # 3. Fallback to forcefully create chat_messages if create_all failed (e.g. enum issues on Postgres)
+    # 3. Fallback to forcefully create chat_messages if create_all failed
     try:
         async with engine.begin() as conn:
-            await conn.execute(text("""
-                DO $$ 
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'chatrole') THEN
-                        CREATE TYPE chatrole AS ENUM ('USER', 'AI', 'user', 'ai');
-                    END IF;
-                END $$;
-            """))
             await conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS chat_messages (
                     id UUID PRIMARY KEY,
                     review_id UUID REFERENCES reviews(id),
-                    role chatrole NOT NULL,
+                    role VARCHAR NOT NULL,
                     content TEXT NOT NULL,
                     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
                 );

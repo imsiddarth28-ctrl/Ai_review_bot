@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.create_table('chat_messages',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('review_id', sa.Uuid(), nullable=True),
-    sa.Column('role', sa.Enum('USER', 'AI', name='chatrole'), nullable=False),
+    sa.Column('role', sa.String(), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['review_id'], ['reviews.id'], ),
