@@ -35,3 +35,19 @@ body {
     border-color: #000000;
   }
 }
+
+/* High-contrast overrides for Tailwind Typography markdown elements */
+.prose {
+  --tw-prose-body: #171717 !important;
+  --tw-prose-headings: #000000 !important;
+  --tw-prose-links: #000000 !important;
+  --tw-prose-bold: #000000 !important;
+  --tw-prose-counters: #171717 !important;
+  --tw-prose-bullets: #171717 !important;
+  --tw-prose-quotes: #171717 !important;
+  --tw-prose-code: #000000 !important;
+  --tw-prose-pre-code: #171717 !important;
+  --tw-prose-pre-bg: #f5f5f5 !important;
+  --tw-prose-th-borders: #000000 !important;
+  --tw-prose-td-borders: #e5e5e5 !important;
+}

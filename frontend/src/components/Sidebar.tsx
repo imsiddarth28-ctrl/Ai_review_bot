@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, FolderGit2, History, BarChart3, Settings, LogOut } from 'lucide-react';
+import { Home, FolderGit2, History, BarChart3, Settings, LogOut, MessageSquare } from 'lucide-react';
 import { clearToken } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +19,7 @@ const Sidebar = () => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Repositories', href: '/dashboard/repositories', icon: FolderGit2 },
     { name: 'Reviews', href: '/dashboard/reviews', icon: History },
+    { name: 'Chat', href: '/dashboard/chat', icon: MessageSquare },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { api, ChatMessage } from '@/lib/api';
-import { Send, Bot, User as UserIcon } from 'lucide-react';
+import { Send, Bot } from 'lucide-react';
 import { useNotification } from './Notifications';
+import ReactMarkdown from 'react-markdown';
 
 export default function ReviewChat({ reviewId }: { reviewId: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -72,7 +73,13 @@ export default function ReviewChat({ reviewId }: { reviewId: string }) {
                   ? 'bg-black text-white' 
                   : 'bg-neutral-100 text-black border border-neutral-200'
               }`}>
-                <p className="whitespace-pre-wrap">{msg.content}</p>
+                {msg.role === 'user' ? (
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                ) : (
+                  <div className="prose prose-sm prose-neutral max-w-none prose-pre:bg-white prose-pre:border prose-pre:border-neutral-200 prose-headings:text-black prose-a:text-black prose-a:underline">
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                )}
               </div>
             </div>
           ))
