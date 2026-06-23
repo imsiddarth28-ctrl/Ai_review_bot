@@ -46,7 +46,7 @@ class User(Base):
     github_access_token = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    repositories = relationship("Repository", back_populates="owner_user")
+    repositories = relationship("Repository", back_populates="owner_user", cascade="all, delete-orphan")
 
 class Repository(Base):
     __tablename__ = "repositories"
@@ -60,7 +60,7 @@ class Repository(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     owner_user = relationship("User", back_populates="repositories")
-    reviews = relationship("Review", back_populates="repository")
+    reviews = relationship("Review", back_populates="repository", cascade="all, delete-orphan")
 
 class Review(Base):
     __tablename__ = "reviews"
@@ -76,8 +76,8 @@ class Review(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     repository = relationship("Repository", back_populates="reviews")
-    issues = relationship("Issue", back_populates="review")
-    chat_messages = relationship("ChatMessage", back_populates="review")
+    issues = relationship("Issue", back_populates="review", cascade="all, delete-orphan")
+    chat_messages = relationship("ChatMessage", back_populates="review", cascade="all, delete-orphan")
 
 class Issue(Base):
     __tablename__ = "issues"

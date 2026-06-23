@@ -80,6 +80,15 @@ async def post_chat_message(
     db.add(user_msg)
     await db.commit()
     
+    # Fetch previous messages (excluding the one we just inserted, to pass history up to now)
+    history_result = await db.execute(
+        select(ChatMessage)
+        .where(ChatMessage.review_id == review_id, ChatMessage.id != user_msg.id)
+        .order_by(ChatMessage.created_at.asc())
+    )
+    chat_history_objs = history_result.scalars().all()
+    history = [{"role": msg.role, "content": msg.content} for msg in chat_history_objs]
+    
     # Generate AI response
     try:
         # Determine provider from original review's model
@@ -94,7 +103,7 @@ async def post_chat_message(
         logger.info(f"Generating AI chat response for review {review_id} using {provider} / {model_name}")
         ai_response_text = await reviewer_service.chat_with_review(
             review_text=review.review_text or "",
-            history=[],
+            history=history,
             user_message=message.content,
             provider=provider,
             model=model_name

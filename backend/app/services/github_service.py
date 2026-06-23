@@ -7,8 +7,9 @@ from app.core.logger import logger
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 class GitHubService:
-    def __init__(self):
-        self.headers = {
+    @property
+    def headers(self) -> Dict[str, str]:
+        return {
             "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28"
