@@ -10,11 +10,11 @@ export default function DashboardLayout({
 }) {
   return (
     <NotificationProvider>
-      <div className="flex h-screen overflow-hidden bg-gray-50/30 text-gray-900">
+      <div className="flex h-screen overflow-hidden bg-white text-black">
         <Sidebar />
-        <div className="flex flex-1 flex-col overflow-hidden relative z-10">
+        <div className="flex flex-1 flex-col overflow-hidden">
           <TopNav />
-          <main className="flex-1 overflow-y-auto p-8 relative z-0">
+          <main className="flex-1 overflow-y-auto p-6">
             <AuthGate>{children}</AuthGate>
           </main>
         </div>

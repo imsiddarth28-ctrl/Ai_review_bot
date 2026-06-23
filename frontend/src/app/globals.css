@@ -1,85 +1,37 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-
 @theme inline {
-  --color-background: #fdfdfd; /* Very subtle off-white for less eye strain */
-  --color-foreground: #0f172a; /* Slate 900 for high contrast but not pure black */
-  --color-accent: #2563eb; /* Blue 600 */
-  --color-accent-hover: #1d4ed8; /* Blue 700 */
-  
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 }
 
 :root {
-  --background: #fdfdfd;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #000000;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  /* Soft, clean background without heavy gradients */
-  background-image: none;
   min-height: 100vh;
 }
 
-/* Minimalist UI Utilities */
 @layer utilities {
-  .minimal-card {
+  .mono-card {
     background: #ffffff;
-    border: 1px solid #e2e8f0; /* slate-200 */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05); /* very soft shadow */
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .minimal-card-hover:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-    border-color: #cbd5e1; /* slate-300 */
-    transform: translateY(-1px);
-  }
-  
-  .minimal-input {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s ease;
-  }
-  
-  .minimal-input:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border: 1px solid #e5e5e5;
+    transition: border-color 0.15s ease;
   }
 
-  .minimal-button {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #334155; /* slate-700 */
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-  
-  .minimal-button:hover {
-    background: #f8fafc; /* slate-50 */
-    border-color: #cbd5e1;
-  }
-  
-  .minimal-button-primary {
-    background: #111827; /* Gray 900 for a stunning, sharp contrast */
-    color: #ffffff;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-  }
-  
-  .minimal-button-primary:hover {
-    background: #1f2937; /* Gray 800 */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  .mono-card:hover {
+    border-color: #000000;
   }
 }

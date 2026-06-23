@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { X } from 'lucide-react';
 
 type NotificationType = 'success' | 'error' | 'info';
 
@@ -32,7 +31,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     setNotifications(prev => [...prev, { id, message, type }]);
     setTimeout(() => {
       removeNotification(id);
-    }, 5000);
+    }, 4000);
   }, []);
 
   const removeNotification = useCallback((id: string) => {
@@ -43,34 +42,20 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     <NotificationContext.Provider value={{ addNotification }}>
       {children}
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        <AnimatePresence>
-          {notifications.map(notification => (
-            <motion.div
-              key={notification.id}
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-              className={`bg-white flex items-center p-4 rounded-xl shadow-md border ${
-                notification.type === 'success' ? 'border-green-200 text-green-600' :
-                notification.type === 'error' ? 'border-red-200 text-red-600' :
-                'border-blue-200 text-blue-600'
-              }`}
+        {notifications.map(notification => (
+          <div
+            key={notification.id}
+            className="bg-white border border-neutral-200 flex items-center px-4 py-3 rounded-lg shadow-sm text-sm text-black"
+          >
+            <p className="font-medium">{notification.message}</p>
+            <button
+              onClick={() => removeNotification(notification.id)}
+              className="ml-4 text-neutral-400 hover:text-black transition-colors"
             >
-              <div className="mr-3">
-                {notification.type === 'success' && <CheckCircle className="h-5 w-5" />}
-                {notification.type === 'error' && <AlertCircle className="h-5 w-5" />}
-                {notification.type === 'info' && <Info className="h-5 w-5" />}
-              </div>
-              <p className="text-sm font-medium text-gray-900">{notification.message}</p>
-              <button
-                onClick={() => removeNotification(notification.id)}
-                className="ml-4 text-gray-400 hover:text-gray-900 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ))}
       </div>
     </NotificationContext.Provider>
   );
