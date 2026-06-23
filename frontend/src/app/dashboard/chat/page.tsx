@@ -113,6 +113,7 @@ export default function GlobalChat() {
   // Layout panel toggles
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [rightPanelTab, setRightPanelTab] = useState<'review' | 'tools'>('review');
   
   // Mobile drawer navigation toggles
   const [mobileLeftOpen, setMobileLeftOpen] = useState(false);
@@ -295,6 +296,31 @@ export default function GlobalChat() {
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 50);
+  };
+
+  const sendPromptInstantly = async (promptText: string) => {
+    if (isLoading || !activeReview) return;
+    setIsLoading(true);
+
+    const tempId = Math.random().toString();
+    setMessages(prev => [...prev, {
+      id: tempId,
+      review_id: activeReview.id,
+      role: 'user',
+      content: promptText,
+      created_at: new Date().toISOString()
+    }]);
+
+    try {
+      await api.postChatMessage(activeReview.id, promptText);
+      const history = await api.getChatHistory(activeReview.id);
+      setMessages(history);
+    } catch (err) {
+      addNotification('Failed to execute command', 'error');
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -719,7 +745,7 @@ export default function GlobalChat() {
           <>
             <div className="p-4 border-b border-neutral-200 flex items-center justify-between flex-shrink-0 bg-white">
               <div>
-                <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">AI Review Document</h3>
+                <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">AI review workspace</h3>
                 <p className="text-xs font-medium text-black truncate w-64">PR #{activeReview.pr_number}: {activeReview.pr_title ?? 'Untitled'}</p>
               </div>
               <button 
@@ -730,13 +756,156 @@ export default function GlobalChat() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5 bg-white">
-              <div className="prose prose-sm prose-neutral max-w-none">
-                <ReactMarkdown components={{ pre: PreRenderer }}>
-                  {activeReview.review_text || "No review content available."}
-                </ReactMarkdown>
-              </div>
+
+            {/* Tab Switched Header */}
+            <div className="flex border-b border-neutral-200 bg-neutral-50 p-1 flex-shrink-0">
+              <button
+                onClick={() => setRightPanelTab('review')}
+                className={cn(
+                  "flex-1 text-center py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  rightPanelTab === 'review' ? "bg-white text-black shadow-2xs font-semibold" : "text-neutral-500 hover:text-black"
+                )}
+              >
+                📄 Review summary
+              </button>
+              <button
+                onClick={() => setRightPanelTab('tools')}
+                className={cn(
+                  "flex-1 text-center py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  rightPanelTab === 'tools' ? "bg-white text-black shadow-2xs font-semibold" : "text-neutral-500 hover:text-black"
+                )}
+              >
+                🛠️ Developer tools
+              </button>
             </div>
+
+            {/* Tab Contents */}
+            {rightPanelTab === 'review' ? (
+              <div className="flex-1 overflow-y-auto p-5 bg-white">
+                <div className="prose prose-sm prose-neutral max-w-none">
+                  <ReactMarkdown components={{ pre: PreRenderer }}>
+                    {activeReview.review_text || "No review content available."}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
+                <div className="space-y-1">
+                  <h4 className="text-xs font-bold text-black uppercase tracking-wider">Real-World Developer Toolbox</h4>
+                  <p className="text-[10px] text-neutral-400 leading-relaxed">Contextual utilities generated directly from PR #{activeReview.pr_number} review results.</p>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black flex items-center gap-1.5">
+                        📝 PR Description Generator
+                      </span>
+                      <span className="text-[9px] bg-neutral-100 border border-neutral-200 text-neutral-500 px-1.5 py-0.5 rounded font-mono">Real-time</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Analyze review findings to draft a professional markdown description for this pull request (includes summary, key changes, and QA checklist).
+                    </p>
+                    <div className="flex gap-2 pt-1.5">
+                      <button
+                        onClick={() => sendPromptInstantly("Generate a professional GitHub Pull Request description in markdown format based on this review. Include: 1. Summary of changes, 2. Key refactors, 3. Testing checklist.")}
+                        disabled={isLoading}
+                        className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        Run in Chat
+                      </button>
+                      <button
+                        onClick={() => handleQuickPrompt("Generate a professional GitHub Pull Request description in markdown format based on this review. Include: 1. Summary of changes, 2. Key refactors, 3. Testing checklist.")}
+                        className="px-2.5 py-1 border border-neutral-200 text-neutral-600 hover:text-black text-[10px] font-semibold rounded-md hover:bg-neutral-50 transition-all cursor-pointer"
+                      >
+                        Edit Prompt
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black flex items-center gap-1.5">
+                        💾 Conventional Commit Drafts
+                      </span>
+                      <span className="text-[9px] bg-neutral-100 border border-neutral-200 text-neutral-500 px-1.5 py-0.5 rounded font-mono">Git helper</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Draft 3 alternative Conventional Commit messages for your changes to keep your repository history clean and readable.
+                    </p>
+                    <div className="flex gap-2 pt-1.5">
+                      <button
+                        onClick={() => sendPromptInstantly("Draft 3 alternative Conventional Commit messages (following the Conventional Commits specification) for the code changes discussed in this review.")}
+                        disabled={isLoading}
+                        className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        Run in Chat
+                      </button>
+                      <button
+                        onClick={() => handleQuickPrompt("Draft 3 alternative Conventional Commit messages (following the Conventional Commits specification) for the code changes discussed in this review.")}
+                        className="px-2.5 py-1 border border-neutral-200 text-neutral-600 hover:text-black text-[10px] font-semibold rounded-md hover:bg-neutral-50 transition-all cursor-pointer"
+                      >
+                        Edit Prompt
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black flex items-center gap-1.5">
+                        🛡️ OWASP Security Threat Audit
+                      </span>
+                      <span className="text-[9px] bg-red-50 border border-red-100 text-red-600 px-1.5 py-0.5 rounded font-mono">Security</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Perform a deep security audit on this review to highlight OWASP Top 10 vulnerabilities (SQLi, XSS, SSRF, auth issues, etc.).
+                    </p>
+                    <div className="flex gap-2 pt-1.5">
+                      <button
+                        onClick={() => sendPromptInstantly("List all security threats or vulnerabilities found in this code review. Assess their severity and map them to OWASP standards if applicable.")}
+                        disabled={isLoading}
+                        className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        Run Audit
+                      </button>
+                      <button
+                        onClick={() => handleQuickPrompt("List all security threats or vulnerabilities found in this code review. Assess their severity and map them to OWASP standards if applicable.")}
+                        className="px-2.5 py-1 border border-neutral-200 text-neutral-600 hover:text-black text-[10px] font-semibold rounded-md hover:bg-neutral-50 transition-all cursor-pointer"
+                      >
+                        Edit Prompt
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black flex items-center gap-1.5">
+                        ⚡ Refactoring Code Planner
+                      </span>
+                      <span className="text-[9px] bg-green-50 border border-green-100 text-green-600 px-1.5 py-0.5 rounded font-mono">Refactor</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Get side-by-side refactored code block suggestions for the most critical bugs or smells identified in this review.
+                    </p>
+                    <div className="flex gap-2 pt-1.5">
+                      <button
+                        onClick={() => sendPromptInstantly("List the top 2-3 critical issues in this code review and provide the refactored code snippets side-by-side with explanations.")}
+                        disabled={isLoading}
+                        className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        Suggest Code
+                      </button>
+                      <button
+                        onClick={() => handleQuickPrompt("List the top 2-3 critical issues in this code review and provide the refactored code snippets side-by-side with explanations.")}
+                        className="px-2.5 py-1 border border-neutral-200 text-neutral-600 hover:text-black text-[10px] font-semibold rounded-md hover:bg-neutral-50 transition-all cursor-pointer"
+                      >
+                        Edit Prompt
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -751,20 +920,130 @@ export default function GlobalChat() {
           <>
             <div className="p-4 border-b border-neutral-200 flex items-center justify-between flex-shrink-0 bg-white z-10 shadow-2xs">
               <div>
-                <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">AI Review Document</h3>
+                <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">AI review workspace</h3>
                 <p className="text-xs font-medium text-black truncate max-w-[200px]">PR #{activeReview.pr_number}</p>
               </div>
               <button onClick={() => setMobileRightOpen(false)} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-500 cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5 bg-white">
-              <div className="prose prose-sm prose-neutral max-w-none">
-                <ReactMarkdown components={{ pre: PreRenderer }}>
-                  {activeReview.review_text || "No review content available."}
-                </ReactMarkdown>
-              </div>
+
+            {/* Tab Switched Header */}
+            <div className="flex border-b border-neutral-200 bg-neutral-50 p-1 flex-shrink-0">
+              <button
+                onClick={() => setRightPanelTab('review')}
+                className={cn(
+                  "flex-1 text-center py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  rightPanelTab === 'review' ? "bg-white text-black shadow-2xs font-semibold" : "text-neutral-500 hover:text-black"
+                )}
+              >
+                📄 Review summary
+              </button>
+              <button
+                onClick={() => setRightPanelTab('tools')}
+                className={cn(
+                  "flex-1 text-center py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  rightPanelTab === 'tools' ? "bg-white text-black shadow-2xs font-semibold" : "text-neutral-500 hover:text-black"
+                )}
+              >
+                🛠️ Developer tools
+              </button>
             </div>
+
+            {rightPanelTab === 'review' ? (
+              <div className="flex-1 overflow-y-auto p-5 bg-white">
+                <div className="prose prose-sm prose-neutral max-w-none">
+                  <ReactMarkdown components={{ pre: PreRenderer }}>
+                    {activeReview.review_text || "No review content available."}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
+                <div className="space-y-1">
+                  <h4 className="text-xs font-bold text-black uppercase tracking-wider">Real-World Developer Toolbox</h4>
+                  <p className="text-[10px] text-neutral-400">Contextual utilities generated directly from PR #{activeReview.pr_number} review results.</p>
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black">📝 PR Description Generator</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Analyze review findings to draft a professional markdown description for this pull request.
+                    </p>
+                    <button
+                      onClick={() => {
+                        sendPromptInstantly("Generate a professional GitHub Pull Request description in markdown format based on this review. Include: 1. Summary of changes, 2. Key refactors, 3. Testing checklist.");
+                        setMobileRightOpen(false);
+                      }}
+                      disabled={isLoading}
+                      className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 cursor-pointer disabled:opacity-50"
+                    >
+                      Run in Chat
+                    </button>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black">💾 Conventional Commit Drafts</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Draft 3 alternative Conventional Commit messages for your changes.
+                    </p>
+                    <button
+                      onClick={() => {
+                        sendPromptInstantly("Draft 3 alternative Conventional Commit messages (following the Conventional Commits specification) for the code changes discussed in this review.");
+                        setMobileRightOpen(false);
+                      }}
+                      disabled={isLoading}
+                      className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 cursor-pointer disabled:opacity-50"
+                    >
+                      Run in Chat
+                    </button>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black">🛡️ OWASP Security Threat Audit</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Perform a deep security audit on this review to highlight OWASP Top 10 vulnerabilities.
+                    </p>
+                    <button
+                      onClick={() => {
+                        sendPromptInstantly("List all security threats or vulnerabilities found in this code review. Assess their severity and map them to OWASP standards if applicable.");
+                        setMobileRightOpen(false);
+                      }}
+                      disabled={isLoading}
+                      className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 cursor-pointer disabled:opacity-50"
+                    >
+                      Run Audit
+                    </button>
+                  </div>
+
+                  <div className="border border-neutral-200 rounded-xl p-3.5 space-y-2 hover:border-neutral-400 transition-colors bg-neutral-50/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-black">⚡ Refactoring Code Planner</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                      Get side-by-side refactored code block suggestions for the most critical bugs.
+                    </p>
+                    <button
+                      onClick={() => {
+                        sendPromptInstantly("List the top 2-3 critical issues in this code review and provide the refactored code snippets side-by-side with explanations.");
+                        setMobileRightOpen(false);
+                      }}
+                      disabled={isLoading}
+                      className="px-2.5 py-1 bg-black text-white text-[10px] font-semibold rounded-md hover:bg-neutral-800 cursor-pointer disabled:opacity-50"
+                    >
+                      Suggest Code
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
